@@ -3,6 +3,8 @@ from pathlib import Path
 import shutil
 
 from audio import extract_audio
+from transcribe import transcribe_audio
+
 
 app = FastAPI()
 
@@ -17,9 +19,10 @@ async def upload_video(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     audio_path = extract_audio(video_path)
-
+    segments = transcribe_audio(audio_path)
     return {
         "status": "uploaded",
         "video": video_path.name,
-        "audio": audio_path.name
+        "audio": audio_path.name,
+        "segments_preview": segments[:5]
     }
